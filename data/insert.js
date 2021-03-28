@@ -2,7 +2,7 @@ async function insertData(sql, pool, exchange, stock, data) {
     // get data from ortex
     const re = /^[a-z]+$/i;
     if (!stock.match(re) || !exchange.match(re)){
-      throw
+      return
     }
    
     const request = pool.request();
