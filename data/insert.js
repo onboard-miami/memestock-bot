@@ -1,5 +1,9 @@
 async function insertData(sql, pool, exchange, stock, data) {
     // get data from ortex
+    const re = /^[a-z]+$/i;
+    if (!stock.match(re) || !exchange.match(re)){
+      throw
+    }
    
     const request = pool.request();
     
@@ -90,9 +94,10 @@ async function insertData(sql, pool, exchange, stock, data) {
       await request.query(`UPDATE dbo.directory SET processed = 0, last_update = GETDATE() WHERE id = @id`)
     }
     const request_sp = pool.request();
+    
+    request_sp.input('exchange', sql.VarChar(50), exchange)
+    request_sp.input('stock', sql.VarChar(50), stock)
     await request_sp.execute('runStoredProcs');
-
-    console.log("SUCCESS");
 };
 
 module.exports = {
