@@ -6,9 +6,12 @@ async function insertData(sql, pool, exchange, stock, data) {
     }
    
     const request = pool.request();
+    const request2 = pool.request();
     
-    request.input('exchange', exchange);
-    request.input('stock', stock);
+    request.input('exchange', sql.VarChar(50), exchange);
+    request.input('stock', sql.VarChar(50), stock);
+    request2.input('exchange', sql.VarChar(50), exchange);
+    request2.input('stock', sql.VarChar(50), stock);
     // check if already in database and filter out records already processed
     const result = await request.query('SELECT * FROM dbo.directory WHERE stock = @stock AND exchange = @exchange');
     const record = result.recordset?.[0] ?? null;
@@ -24,7 +27,7 @@ async function insertData(sql, pool, exchange, stock, data) {
   
     const count = Object.keys(data).length;
     if (count === 0 ) {
-      console.log("No new data to process!")
+      await request2.execute('runStoredProcs');
       return;
     }
   
@@ -93,11 +96,8 @@ async function insertData(sql, pool, exchange, stock, data) {
     else {
       await request.query(`UPDATE dbo.directory SET processed = 0, last_update = GETDATE() WHERE id = @id`)
     }
-    const request_sp = pool.request();
-    
-    request_sp.input('exchange', sql.VarChar(50), exchange)
-    request_sp.input('stock', sql.VarChar(50), stock)
-    await request_sp.execute('runStoredProcs');
+
+    await request2.execute('runStoredProcs');
 };
 
 module.exports = {

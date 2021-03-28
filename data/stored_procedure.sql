@@ -225,3 +225,14 @@ BEGIN
     EXEC processDataScore @table;
 END
 GO
+
+USE ShortSqueeze;   
+GRANT EXECUTE ON OBJECT::dbo.processData  
+    TO [squeeze-bot];  
+GO  
+GRANT EXECUTE ON OBJECT::dbo.processDataCB  
+    TO [squeeze-bot];  
+GO  
+GRANT EXECUTE ON OBJECT::dbo.runStoredProcs  
+    TO [squeeze-bot];  
+GO  

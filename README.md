@@ -3,7 +3,8 @@
 This is the memestocks discord squeeze bot.
 
 ## Issues
-Make sure you're tagging issues correctly when filing them. Bug, enhancement, and discussion should be the main ones you use.
+Non-contributors can't assign labels, so just let me know which area your issue references.
+Bug, enhancement, and discussion should be the main labels you use.
 
 ## Structure
 Index.js has the discord bot commands.
