@@ -3,7 +3,7 @@
 This is the memestocks discord squeeze bot.
 
 ## Issues
-Make sure you're tagging issues correctly when filing them. Bug, feature request, and discussion should be the main ones you use.
+Make sure you're tagging issues correctly when filing them. Bug, enhancement, and discussion should be the main ones you use.
 
 ## Structure
 Index.js has the discord bot commands.
