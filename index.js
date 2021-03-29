@@ -1,6 +1,6 @@
 const { scrape_data } = require('./scraper');
 require('dotenv').config();
-const { sql, poolPromise, insertData } = require('./data');
+const { sql, poolPromise, insertData, processData } = require('./data');
 const { Client, MessageEmbed } = require('discord.js');
 
 const {
@@ -139,6 +139,7 @@ If I just stuck with what I knew best (gme/amc) would be up bigly right now inst
 		try {
 			const data = await scrape_data(stock, exchange, ORTEX_USER, ORTEX_PASS);
 			insertData(sql, pool, exchange, stock, data);
+			// processData(sql, pool, exchange, stock);
 		}
 		catch (error) {
 			console.log(error)
@@ -171,6 +172,7 @@ If I just stuck with what I knew best (gme/amc) would be up bigly right now inst
 		try {
 			const data = await scrape_data(stock, record.exchange, ORTEX_USER, ORTEX_PASS);
 			insertData(sql, pool, record.exchange, stock, data);
+			// processData(sql, pool, exchange, stock);
 		}
 		catch (error) {
 			console.log(error)
@@ -201,6 +203,8 @@ If I just stuck with what I knew best (gme/amc) would be up bigly right now inst
 		if (record === null) {
 			return message.channel.send(`${message.author}: Ticker ${stock} does not exist yet, please add it.`);
 		}
+
+		await processData(sql, pool, record.exchange, record.stock)
 
 		const score = {};
 

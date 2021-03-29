@@ -1,5 +1,5 @@
 const sql = require('mssql');
-const { insertData } = require('./insert.js');
+const { insertData, processData } = require('./insert.js');
 require('dotenv').config();
 
 
@@ -21,5 +21,5 @@ const poolPromise = new sql.ConnectionPool(config)
 	.catch(err => console.log('Database Connection Failed! Bad Config: ', err));
 
 module.exports = {
-	sql, poolPromise, insertData,
+	sql, poolPromise, insertData, processData
 };

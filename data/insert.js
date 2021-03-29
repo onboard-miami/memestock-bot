@@ -1,3 +1,24 @@
+async function processData(sql, pool, exchange, stock) {
+  const re = /^[a-z]+$/i;
+    if (!stock.match(re) || !exchange.match(re)){
+      return
+    }
+  const request = await pool.request();
+  request.input('exchange', sql.VarChar(50), exchange);
+  request.input('stock', sql.VarChar(50), stock);
+  let i = 1;
+  while (i === 1) {
+    await request.execute('runStoredProcs')
+    .then(result => {
+      console.log("SUCCESS");
+      i = 0;
+    })
+    .catch(err => {
+      console.log("ERROR")
+    })
+  }
+}
+
 async function insertData(sql, pool, exchange, stock, data) {
     // get data from ortex
     const re = /^[a-z]+$/i;
@@ -5,13 +26,11 @@ async function insertData(sql, pool, exchange, stock, data) {
       return
     }
    
-    const request = pool.request();
-    const request2 = pool.request();
+    const request = await pool.request();
     
     request.input('exchange', sql.VarChar(50), exchange);
     request.input('stock', sql.VarChar(50), stock);
-    request2.input('exchange', sql.VarChar(50), exchange);
-    request2.input('stock', sql.VarChar(50), stock);
+
     // check if already in database and filter out records already processed
     const result = await request.query('SELECT * FROM dbo.directory WHERE stock = @stock AND exchange = @exchange');
     const record = result.recordset?.[0] ?? null;
@@ -27,7 +46,6 @@ async function insertData(sql, pool, exchange, stock, data) {
   
     const count = Object.keys(data).length;
     if (count === 0 ) {
-      await request2.execute('runStoredProcs');
       return;
     }
   
@@ -83,7 +101,7 @@ async function insertData(sql, pool, exchange, stock, data) {
           Math.round(data[i].vol), Math.round(data[i].lend_vol), Math.round(data[i].xcr),
           null, null, null, null, null, null, null, null, null, null, Math.round(data[i].sie) * data[i].close);
     } 
-    request.bulk(table, (err, result) => {
+    await request.bulk(table, (err, result) => {
         if (err) {
             console.log(err);
         }
@@ -97,9 +115,9 @@ async function insertData(sql, pool, exchange, stock, data) {
       await request.query(`UPDATE dbo.directory SET processed = 0, last_update = GETDATE() WHERE id = @id`)
     }
 
-    await request2.execute('runStoredProcs');
 };
 
 module.exports = {
-    insertData
+    insertData,
+    processData
 }
