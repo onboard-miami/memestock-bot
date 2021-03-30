@@ -7,15 +7,16 @@ async function processData(sql, pool, exchange, stock) {
   request.input('exchange', sql.VarChar(50), exchange);
   request.input('stock', sql.VarChar(50), stock);
   let i = 1;
-  while (i === 1) {
+  while (i < 5) {
     await request.execute('runStoredProcs')
     .then(result => {
       console.log("SUCCESS");
-      i = 0;
+      i = 5;
     })
     .catch(err => {
       console.log("ERROR")
     })
+    i++;
   }
 }
 

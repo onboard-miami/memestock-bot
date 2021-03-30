@@ -172,7 +172,7 @@ If I just stuck with what I knew best (gme/amc) would be up bigly right now inst
 		try {
 			const data = await scrape_data(stock, record.exchange, ORTEX_USER, ORTEX_PASS);
 			insertData(sql, pool, record.exchange, stock, data);
-			// processData(sql, pool, exchange, stock);
+			processData(sql, pool, record.exchange, stock);
 		}
 		catch (error) {
 			console.log(error)
@@ -264,12 +264,12 @@ If I just stuck with what I knew best (gme/amc) would be up bigly right now inst
 			.setDescription('Latest Ortex Short Interest data. If not up to date, run the !update ticker command.\nReminder that the previous day\'s data may not be available yet.')
 			.addFields(
 				{ name: '\u200B', value: '\u200B' },
-				{ name: 'Short Interest', value: `${new Intl.NumberFormat().format(si.short_interest)}\n ${Math.round(((si.short_interest / prev_si.short_interest) - 1) * 100) / 100}% change` },
+				{ name: 'Short Interest', value: `${new Intl.NumberFormat().format(si.short_interest)}\n ${Math.round(((si.short_interest / prev_si.short_interest) - 1) * 100)}% change` },
 				{ name: 'SI% of Free Float', value: `${si.si_freefloat}%\n ${Math.round((si.si_freefloat - prev_si.si_freefloat) * 100) / 100} basis point change` },
-				{ name: 'Shares on loan', value: `${new Intl.NumberFormat().format(si.on_loan)}\n ${Math.round(((si.on_loan / prev_si.on_loan) - 1) * 100) / 100}% change` },
+				{ name: 'Shares on loan', value: `${new Intl.NumberFormat().format(si.on_loan)}\n ${Math.round(((si.on_loan / prev_si.on_loan) - 1) * 100)}% change` },
 				{ name: 'Days to Cover', value: `${Math.round(si.shorts_dtc * 100) / 100}\n ${Math.round((si.shorts_dtc - prev_si.shorts_dtc) * 100) / 100} days change` },
 				{ name: 'Utilization', value: `${si.utilization}%\n ${Math.round((si.utilization - prev_si.utilization) * 100) / 100} basis point change` },
-				{ name: 'Lending Volume', value: `${new Intl.NumberFormat().format(si.lending_volume)}\n ${Math.round(((si.lending_volume / prev_si.lending_volume) - 1) * 100) / 100}% change` },
+				{ name: 'Lending Volume', value: `${new Intl.NumberFormat().format(si.lending_volume)}\n ${Math.round(((si.lending_volume / prev_si.lending_volume) - 1) * 100)}% change` },
 				{ name: 'Closing Price', value: `${si.close}\nPrevious close ${prev_si.close}` },
 				{ name: 'Estimated Cost Basis', value: `${si.cost_basis}\n ${direction} $${Math.round((si.cost_basis - prev_si.cost_basis) * 100) / 100}` },
 				{ name: '\u200B', value: '\u200B' },
@@ -308,6 +308,9 @@ If I just stuck with what I knew best (gme/amc) would be up bigly right now inst
 		break;
 	case 'profit':
 		message.channel.send('You can’t go broke taking profits!');
+		break;
+	case 'clvs':
+		message.channel.send(`"O' cruel fate, to be thusly boned! Ask not for whom the bone bones-it bones for thee." - Bender`);
 		break;
 	default:
 		message.channel.send('Uknown command: Use !info to view accepted commands.');
