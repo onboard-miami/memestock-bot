@@ -100,7 +100,7 @@ async function insertData(sql, pool, exchange, stock, data) {
           data[i].age, data[i].c2b, data[i].ffol, Math.round(data[i].onl), data[i].shorts_dtc, 
           Math.round(data[i].sie), data[i].sieff, data[i].tickets, data[i].utl, 
           Math.round(data[i].vol), Math.round(data[i].lend_vol), Math.round(data[i].xcr),
-          null, null, null, null, null, null, null, null, null, null, Math.round(data[i].sie) * data[i].close);
+          null, null, null, null, null, null, null, null, null, null, null);
     } 
     await request.bulk(table, (err, result) => {
         if (err) {

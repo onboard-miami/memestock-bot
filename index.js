@@ -1,7 +1,7 @@
 const { scrape_data } = require('./scraper');
 require('dotenv').config();
 const { sql, poolPromise, insertData, processData } = require('./data');
-const { Client, MessageEmbed } = require('discord.js');
+const { Client, MessageEmbed, MessageAttachment } = require('discord.js');
 
 const {
 	ORTEX_USER,
@@ -92,6 +92,11 @@ Note: All components are calculated based on 30 day running averages. Furthermor
 			.setFooter('Memestocks Discord');
 
 		return message.channel.send(exampleEmbed);
+	}
+
+	function sendSteelMessage() {
+		const attach = new MessageAttachment('https://media1.tenor.com/images/1a9da897e2e77dd304f7a479720eb1b3/tenor.gif?itemid=11280947');
+		return message.channel.send(attach);
 	}
 
 	function sendFomoMessage() {
@@ -306,7 +311,19 @@ If I just stuck with what I knew best (gme/amc) would be up bigly right now inst
 	case 'hogs':
 		sendHogsMessage();
 		break;
+	case 'pigs':
+		sendHogsMessage();
+		break;
 	case 'profit':
+		message.channel.send('You can’t go broke taking profits!');
+		break;
+	case 'steel':
+		message.channel.send('X gon give it to ya!');
+		break;
+	case 'steelx':
+		sendSteelMessage();
+		break;
+	case 'profits':
 		message.channel.send('You can’t go broke taking profits!');
 		break;
 	case 'clvs':
