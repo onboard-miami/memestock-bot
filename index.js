@@ -39,7 +39,8 @@ client.on('message', message => {
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
 
-	function sendInfo() {
+
+	function sendInfo(args) {
 		const exampleEmbed = new MessageEmbed()
 			.setColor('GOLD')
 			.setTitle('Squeeze-Bot Information')
@@ -53,17 +54,22 @@ client.on('message', message => {
 				{ name: '!add', value: 'Adds a new stock to the Ortex scanner. Requires two arguments: stock exchange. \nExample: !add AMC NYSE' },
 				{ name: '!update', value: 'Updates the short interest data for a symbol. \nExample: !update AMC' },
 				{ name: '!score', value: 'Returns the calculated squeeze score of a symbol. Score is 0-10, >= 5 means a squeeze is indicated, >=6 means  it\'s highly likely or in progress. \nExample: !score AMC\nFor the score at a specific date include it formatted as yyyy-mm-dd\nExample: !score AMC 2021-01-25' },
-				{ name: '!latest', value: 'Retrieve the latest Short Interest data available on the provided symbol. \nExample: !latest AMC' },
+				{ name: '!latest', value: 'Retrieve the latest Short Interest data available on the provided symbol. \nExample: !latest AMC\nInclude optional arguments day,week,month to get changes on a different basis.\nExample: !latest AMC week.\nInclude optional date argument to get Ortex as of that date.\nExample: !latest AMC 2021-01-01' },
 				{ name: '!fomo', value: 'Call out a fellow member attempting to fomo their life savings into a soon to be worthless stock. \nExample: !fomo @hero' },
+				{ name: '!hogs/!pigs', value: 'Return hogs quote.' },
+				{ name: '!profit', value: 'Return profits quote.' },
+				{ name: '!steel', value: 'Return steel quote.' },
+				{ name: '!steelx', value: 'Return steel gif.' },
+				{ name: '!clvs', value: 'Return bender quote.' },
 				{ name: '\u200B', value: '\u200B' },
 			)
 			.setTimestamp()
 			.setFooter('Memestocks Discord');
-
+	
 		return message.channel.send(exampleEmbed);
 	}
-
-	function sendTech() {
+	
+	function sendTech(args) {
 		const exampleEmbed = new MessageEmbed()
 			.setColor('WHITE')
 			.setTitle('Squeeze Score Information')
@@ -72,53 +78,53 @@ client.on('message', message => {
 				{ name: '\u200B', value: '\u200B' },
 				{ name: 'Algorithm', value: 
 				`	
-1. Utilization: ABS(z-score of utilization) > 5. MEDIUM WEIGHT.
-2. Utilization has hit 100% at least once. MEDIUM WEIGHT.
-3. Volume: POS(z-score of volume) > 10. VERY STRONG WEIGHT.
-4. Cost to Borrow: POS(coefficient of CTB) > .5. MEDIUM WEIGHT.
-5. Estimated Short Interest: POS(z-score of ESI) > 4. STRONG WEIGHT.
-6. SI%FF: POS(z-score of SI%FF) > 2. MEDIUM WEIGHT.
-7. Cost Basis: Crossover of CB by price. 10% Under. STRONG WEIGHT.
-8. Cost to Borrow: Over 150%. MEDIUM WEIGHT.
-9. Utilization: rolling mean > 90%. MEDIUM WEIGHT.
-10. Utilization: POS(coefficient of utilization) > .1. MEDIUM WEIGHT.
-
-Note: All components are calculated based on 30 day running averages. Furthermore, the score itself has a 14 day average over the components.
-`
+	1. Utilization: ABS(z-score of utilization) > 5. MEDIUM WEIGHT.
+	2. Utilization has hit 100% at least once. MEDIUM WEIGHT.
+	3. Volume: POS(z-score of volume) > 10. VERY STRONG WEIGHT.
+	4. Cost to Borrow: POS(coefficient of CTB) > .5. MEDIUM WEIGHT.
+	5. Estimated Short Interest: POS(z-score of ESI) > 4. STRONG WEIGHT.
+	6. SI%FF: POS(z-score of SI%FF) > 2. MEDIUM WEIGHT.
+	7. Cost Basis: Crossover of CB by price. 10% Under. STRONG WEIGHT.
+	8. Cost to Borrow: Over 150%. MEDIUM WEIGHT.
+	9. Utilization: rolling mean > 90%. MEDIUM WEIGHT.
+	10. Utilization: POS(coefficient of utilization) > .1. MEDIUM WEIGHT.
+	
+	Note: All components are calculated based on 30 day running averages. Furthermore, the score itself has a 14 day average over the components.
+	`
 				},
 				{ name: '\u200B', value: '\u200B' },
 			)
 			.setTimestamp()
 			.setFooter('Memestocks Discord');
-
+	
 		return message.channel.send(exampleEmbed);
 	}
-
-	function sendSteelMessage() {
+	
+	function sendSteelMessage(args) {
 		const attach = new MessageAttachment('https://media1.tenor.com/images/1a9da897e2e77dd304f7a479720eb1b3/tenor.gif?itemid=11280947');
 		return message.channel.send(attach);
 	}
-
-	function sendFomoMessage() {
+	
+	function sendFomoMessage(args) {
 		if (args[0]) {
 			const user = getUserFromMention(args[0]);
-
+	
 			if (!user) {
 				return message.reply('Please use a proper mention on the FOMO command.');
 			}
 			return message.channel.send(`${user} Please listen to the wise words of hero:
-From my experience, just giving my two cents, if it feels like the boat left already better not to play and fomo into low reward risk ratio plays. 
-Especially for companies you dont understand 100%. Gonna make less or lose chasing imo. 
-If I just stuck with what I knew best (gme/amc) would be up bigly right now instead I lost and paid an even bigger opportunity cost.`);
+	From my experience, just giving my two cents, if it feels like the boat left already better not to play and fomo into low reward risk ratio plays. 
+	Especially for companies you dont understand 100%. Gonna make less or lose chasing imo. 
+	If I just stuck with what I knew best (gme/amc) would be up bigly right now instead I lost and paid an even bigger opportunity cost.`);
 		}
 		return;
 	}
-
-	function sendHogsMessage() {
+	
+	function sendHogsMessage(args) {
 		return message.channel.send('In the immortal words of jn_ku, "Pigs get fat, hogs get slaughtered"');
 	}
-
-	async function addTicker() {
+	
+	async function addTicker(args) {
 		/*
 		First check if it already exists,
 		second, call Ortex scraper
@@ -127,14 +133,14 @@ If I just stuck with what I knew best (gme/amc) would be up bigly right now inst
 		if (!args[0] || !args[1]) {
 			return message.channel.send(`${message.author}: Please include valid arguments in the form !add symbol exchange`);
 		}
-
+	
 		message.channel.send(`Processing: Please wait...`);
-
+	
 		const pool = await poolPromise;
 		const request = pool.request();
 		const stock = args[0].toUpperCase();
 		const exchange = args[1].toUpperCase();
-    
+	
 		request.input('stock', stock);
 		request.input('exchange', exchange);
 		// check if already in database
@@ -157,18 +163,18 @@ If I just stuck with what I knew best (gme/amc) would be up bigly right now inst
 			return message.channel.send(`${message.author}: Ticker ${stock} already exists, it's short interest data has been updated.`);
 		}
 	}
-
-	async function updateTicker() {
+	
+	async function updateTicker(args) {
 		if (!args[0]) {
 			return message.channel.send(`${message.author}: Please include valid arguments in the form !update symbol`);
 		}
-
+	
 		message.channel.send(`Processing: Please wait...`);
-
+	
 		const pool = await poolPromise;
 		const request = pool.request();
 		const stock = args[0].toUpperCase();
-    
+	
 		request.input('stock', stock);
 		// check if already in database
 		const result = await request.query('SELECT * FROM dbo.directory WHERE stock = @stock');
@@ -190,29 +196,29 @@ If I just stuck with what I knew best (gme/amc) would be up bigly right now inst
 			return message.channel.send(`${message.author}: Ticker ${stock}'s short interest has been updated.`);
 		}
 	}
-
-	async function getTickerScore() {
+	
+	async function getTickerScore(args) {
 		if (!args[0]) {
 			return message.channel.send(`${message.author}: Please include valid arguments in the form !score symbol`);
 		}
-
+	
 		const pool = await poolPromise;
 		const request = pool.request();
 		const stock = args[0].toUpperCase();
-    
+	
 		request.input('stock', stock);
-
+	
 		const result = await request.query('SELECT * FROM dbo.directory WHERE stock = @stock');
 		const record = result.recordset?.[0] ?? null;
 		
 		if (record === null) {
 			return message.channel.send(`${message.author}: Ticker ${stock} does not exist yet, please add it.`);
 		}
-
+	
 		await processData(sql, pool, record.exchange, record.stock)
-
+	
 		const score = {};
-
+	
 		if (args[1]) {
 			request.input('date', args[1]);
 			try {
@@ -233,40 +239,65 @@ If I just stuck with what I knew best (gme/amc) would be up bigly right now inst
 		}
 		return message.channel.send(`${message.author}\nTicker: ${stock}\nScore: ${score.record.squeeze_score}\nAs of: ${score.record.date.toUTCString()}`);
 		
-
+	
 	}
-
-	async function getLatestTicker() {
+	
+	async function getLatestTicker(args) {
 		if (!args[0]) {
-			return message.channel.send(`${message.author}: Please include valid arguments in the form !latest symbol`);
+			return message.channel.send(`${message.author}: Please include valid arguments in the form !latest symbol [date or comparison]`);
 		}
-
+	
 		const pool = await poolPromise;
 		const request = pool.request();
 		const stock = args[0].toUpperCase();
-    
+		let display = '';
+	
 		request.input('stock', stock);
-
+	
 		const result = await request.query('SELECT * FROM dbo.directory WHERE stock = @stock');
 		const record = result.recordset?.[0] ?? null;
 		
 		if (record === null) {
 			return message.channel.send(`${message.author}: Ticker ${stock} does not exist yet, please add it.`);
 		}
+	
+		if (args[1] === 'day' || !args[1]) {
+			const result2 = await request.query(`SELECT TOP 2 * FROM dbo.${record.stock}_${record.exchange} ORDER BY date DESC `);
+			si = result2.recordset?.[0] ?? null;
+			prev_si = result2.recordset?.[1] ?? null;
+			display = 'Latest Ortex Short Interest data with benchmark of previous day. If not up to date, run the !update ticker command.\nReminder that the previous day\'s data may not be available yet.';
+		}
+		else if(args[1] === 'week') {
+			const result2 = await request.query(`SELECT * FROM (SELECT *, ROW_NUMBER() OVER(ORDER BY [date] DESC) AS rownum FROM dbo.${record.stock}_${record.exchange}) x WHERE x.rownum IN (1, 6)`);
+			si = result2.recordset?.[0] ?? null;
+			prev_si = result2.recordset?.[1] ?? null;
+			display = 'Latest Ortex Short Interest data with benchmark of prior week. If not up to date, run the !update ticker command.\nReminder that the previous day\'s data may not be available yet.';
 
-		const result2 = await request.query(`SELECT TOP 2 * FROM dbo.${record.stock}_${record.exchange} ORDER BY date DESC `);
-		si = result2.recordset?.[0] ?? null;
-		prev_si = result2.recordset?.[1] ?? null;
+		}
+		else if (args[1] === 'month') {
+			const result2 = await request.query(`SELECT * FROM (SELECT *, ROW_NUMBER() OVER(ORDER BY [date] DESC) AS rownum FROM dbo.${record.stock}_${record.exchange}) x WHERE x.rownum IN (1, 21)`);
+			si = result2.recordset?.[0] ?? null;
+			prev_si = result2.recordset?.[1] ?? null;
+			display = 'Latest Ortex Short Interest data with benchmark of prior month. If not up to date, run the !update ticker command.\nReminder that the previous day\'s data may not be available yet.';
+		}
+		else {
+			request.input('date', sql.Date, new Date(args[1]));
+			const result2 = await request.query(`SELECT TOP 2 * FROM dbo.${record.stock}_${record.exchange} WHERE date <= @date ORDER BY date DESC `);
+			si = result2.recordset?.[0] ?? null;
+			prev_si = result2.recordset?.[1] ?? null;
+			display = 'Ortex Short Interest data from specified date with benchmark of prior day.';
 
+		}
+	
 		
 		if (si === null || prev_si === null) {
-			return message.channel.send(`${message.author}: Data could not be found, please check your arguments.`);
+			return message.channel.send(`${message.author}: Data could not be found for this date.`);
 		}
 		const direction = (si.cost_basis - prev_si.cost_basis) > 0 ? 'Up' : 'Down'
 		const exampleEmbed = new MessageEmbed()
 			.setColor('GREEN')
 			.setTitle(`Ortex data for: $${stock} AS OF ${si.date.toUTCString()}`)
-			.setDescription('Latest Ortex Short Interest data. If not up to date, run the !update ticker command.\nReminder that the previous day\'s data may not be available yet.')
+			.setDescription(display)
 			.addFields(
 				{ name: '\u200B', value: '\u200B' },
 				{ name: 'Short Interest', value: `${new Intl.NumberFormat().format(si.short_interest)}\n ${Math.round(((si.short_interest / prev_si.short_interest) - 1) * 100)}% change` },
@@ -281,38 +312,38 @@ If I just stuck with what I knew best (gme/amc) would be up bigly right now inst
 			)
 			.setTimestamp()
 			.setFooter('Memestocks Discord');
-
+	
 		return message.channel.send(exampleEmbed);
-
+	
 	}
 
 	switch (command) {
 	case 'info':
-		sendInfo();
+		sendInfo(args);
 		break;
 	case 'tech':
-		sendTech();
+		sendTech(args);
 		break;
 	case 'add':
-		addTicker();
+		addTicker(args);
 		break;
 	case 'score':
-		getTickerScore();
+		getTickerScore(args);
 		break;
 	case 'latest':
-		getLatestTicker();
+		getLatestTicker(args);
 		break;
 	case 'update':
-		updateTicker();
+		updateTicker(args);
 		break;
 	case 'fomo':
-		sendFomoMessage();
+		sendFomoMessage(args);
 		break;
 	case 'hogs':
-		sendHogsMessage();
+		sendHogsMessage(args);
 		break;
 	case 'pigs':
-		sendHogsMessage();
+		sendHogsMessage(args);
 		break;
 	case 'profit':
 		message.channel.send('You can’t go broke taking profits!');
@@ -321,7 +352,7 @@ If I just stuck with what I knew best (gme/amc) would be up bigly right now inst
 		message.channel.send('X gon give it to ya!');
 		break;
 	case 'steelx':
-		sendSteelMessage();
+		sendSteelMessage(args);
 		break;
 	case 'profits':
 		message.channel.send('You can’t go broke taking profits!');
