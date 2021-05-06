@@ -48,8 +48,17 @@ async function scrape_data(stock, exchange, user, pass) {
     const onlHandle = data_properties.get('onl');
     const onl = await onlHandle.jsonValue();
   
-    const shorts_dtc_NoneHandle = data_properties.get('shorts_dtc_None');
-    const shorts_dtc_None = await shorts_dtc_NoneHandle.jsonValue();
+    const shorts_dtc_10Handle = data_properties.get('shorts_dtc_10');
+    const shorts_dtc_10 = await shorts_dtc_10Handle.jsonValue();
+
+    const shorts_dtc_91Handle = data_properties.get('shorts_dtc_91');
+    const shorts_dtc_91 = await shorts_dtc_91Handle.jsonValue();
+
+    const shorts_dtcsie_10Handle = data_properties.get('shorts_dtcsie_10');
+    const shorts_dtcsie_10 = await shorts_dtcsie_10Handle.jsonValue();
+
+    const shorts_dtcsie_91Handle = data_properties.get('shorts_dtcsie_91');
+    const shorts_dtcsie_91 = await shorts_dtcsie_91Handle.jsonValue();
   
     const sieHandle = data_properties.get('sie');
     const sie = await sieHandle.jsonValue();
@@ -85,7 +94,10 @@ async function scrape_data(stock, exchange, user, pass) {
         c2b: c2b.filter((s) => s[0] === i[0])[0]?.[1] ?? '',
         ffol: ffol.filter((s) => s[0] === i[0])[0]?.[1] ?? '',
         onl: onl.filter((s) => s[0] === i[0])[0]?.[1] ?? '',
-        shorts_dtc: shorts_dtc_None.filter((s) => s[0] === i[0])[0]?.[1] ?? '',
+        shorts_dtc_10: shorts_dtc_10.filter((s) => s[0] === i[0])[0]?.[1] ?? '',
+        shorts_dtc_91: shorts_dtc_91.filter((s) => s[0] === i[0])[0]?.[1] ?? '',
+        shorts_dtcsie_10: shorts_dtcsie_10.filter((s) => s[0] === i[0])[0]?.[1] ?? '',
+        shorts_dtcsie_91: shorts_dtcsie_91.filter((s) => s[0] === i[0])[0]?.[1] ?? '',
         sie: sie.filter((s) => s[0] === i[0])[0]?.[1] ?? '',
         sieff: sieff.filter((s) => s[0] === i[0])[0]?.[1] ?? '',
         tickets: tickets.filter((s) => s[0] === i[0])[0]?.[1] ?? '',

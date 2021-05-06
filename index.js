@@ -261,6 +261,8 @@ client.on('message', message => {
 			return message.channel.send(`${message.author}: Ticker ${stock} does not exist yet, please add it.`);
 		}
 	
+		await processData(sql, pool, record.exchange, record.stock);
+
 		if (args[1] === 'day' || !args[1]) {
 			const result2 = await request.query(`SELECT TOP 2 * FROM dbo.${record.stock}_${record.exchange} ORDER BY date DESC `);
 			si = result2.recordset?.[0] ?? null;
@@ -303,7 +305,10 @@ client.on('message', message => {
 				{ name: 'Short Interest', value: `${new Intl.NumberFormat().format(si.short_interest)}\n ${Math.round(((si.short_interest / prev_si.short_interest) - 1) * 100)}% change` },
 				{ name: 'SI% of Free Float', value: `${si.si_freefloat}%\n ${Math.round((si.si_freefloat - prev_si.si_freefloat) * 100) / 100} basis point change` },
 				{ name: 'Shares on loan', value: `${new Intl.NumberFormat().format(si.on_loan)}\n ${Math.round(((si.on_loan / prev_si.on_loan) - 1) * 100)}% change` },
-				{ name: 'Days to Cover', value: `${Math.round(si.shorts_dtc * 100) / 100}\n ${Math.round((si.shorts_dtc - prev_si.shorts_dtc) * 100) / 100} days change` },
+				{ name: 'Days to Cover: 3m (on loan)', value: `${Math.round(si.shorts_dtc_10 * 100) / 100}\n ${Math.round((si.shorts_dtc_10 - prev_si.shorts_dtc_10) * 100) / 100} days change` },
+				{ name: 'Days to Cover: 2w (on loan)', value: `${Math.round(si.shorts_dtc_91 * 100) / 100}\n ${Math.round((si.shorts_dtc_91 - prev_si.shorts_dtc_91) * 100) / 100} days change` },
+				{ name: 'Days to Cover: 3m (estimated SI)', value: `${Math.round(si.shorts_dtcsie_10 * 100) / 100}\n ${Math.round((si.shorts_dtcsie_10 - prev_si.shorts_dtcsie_10) * 100) / 100} days change` },
+				{ name: 'Days to Cover: 2w (estimated SI)', value: `${Math.round(si.shorts_dtcsie_91 * 100) / 100}\n ${Math.round((si.shorts_dtcsie_91 - prev_si.shorts_dtcsie_91) * 100) / 100} days change` },
 				{ name: 'Utilization', value: `${si.utilization}%\n ${Math.round((si.utilization - prev_si.utilization) * 100) / 100} basis point change` },
 				{ name: 'Lending Volume', value: `${new Intl.NumberFormat().format(si.lending_volume)}\n ${Math.round(((si.lending_volume / prev_si.lending_volume) - 1) * 100)}% change` },
 				{ name: 'Closing Price', value: `${si.close}\nPrevious close ${prev_si.close}` },
@@ -356,6 +361,9 @@ client.on('message', message => {
 		break;
 	case 'profits':
 		message.channel.send('You can’t go broke taking profits!');
+		break;
+	case 'maximumshit':
+		message.channel.send('Oooh boy, here we go again clvs.. what a piece of shit amiright..');
 		break;
 	case 'clvs':
 		message.channel.send(`"O' cruel fate, to be thusly boned! Ask not for whom the bone bones-it bones for thee." - Bender`);

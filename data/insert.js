@@ -63,7 +63,10 @@ async function insertData(sql, pool, exchange, stock, data) {
     table.columns.add('borrow_cost', sql.Float, { nullable: false });
     table.columns.add('freefloat_ol', sql.Decimal(28, 2), { nullable: false });
     table.columns.add('on_loan', sql.BigInt, { nullable: false });
-    table.columns.add('shorts_dtc', sql.Float, { nullable: false });
+    table.columns.add('shorts_dtc_10', sql.Float, { nullable: false });
+    table.columns.add('shorts_dtc_91', sql.Float, { nullable: false });
+    table.columns.add('shorts_dtcsie_10', sql.Float, { nullable: false });
+    table.columns.add('shorts_dtcsie_91', sql.Float, { nullable: false });
     table.columns.add('short_interest', sql.BigInt, { nullable: false });
     table.columns.add('si_freefloat', sql.Decimal(28, 2), { nullable: false });
     table.columns.add('tickets', sql.Int, { nullable: false });
@@ -97,7 +100,8 @@ async function insertData(sql, pool, exchange, stock, data) {
     
     for (i = 0; i < count; i++) {
         table.rows.add(new Date(data[i].date), data[i].open, data[i].high, data[i].low, data[i].close, 
-          data[i].age, data[i].c2b, data[i].ffol, Math.round(data[i].onl), data[i].shorts_dtc, 
+          data[i].age, data[i].c2b, data[i].ffol, Math.round(data[i].onl), data[i].shorts_dtc_10, 
+          data[i].shorts_dtc_91, data[i].shorts_dtcsie_10, data[i].shorts_dtcsie_91, 
           Math.round(data[i].sie), data[i].sieff, data[i].tickets, data[i].utl, 
           Math.round(data[i].vol), Math.round(data[i].lend_vol), Math.round(data[i].xcr),
           null, null, null, null, null, null, null, null, null, null, null);
